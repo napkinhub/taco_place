@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taco Place — Best Tacos in San Diego</title>
+<style>
+  :root {
+    --terracotta: #d94f30;
+    --masa: #f6e7c9;
+    --avocado: #4f6b3a;
+    --charcoal: #2b2320;
+    --cream: #fffaf0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    line-height: 1.6;
+  }
+  header {
+    background: linear-gradient(135deg, var(--terracotta), #b8391f);
+    color: var(--cream);
+    padding: 6rem 2rem;
+    text-align: center;
+  }
+  header .tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    padding: 0.35rem 1rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+  header h1 {
+    font-size: clamp(2.2rem, 5vw, 3.75rem);
+    margin-bottom: 1rem;
+  }
+  header p {
+    font-size: 1.2rem;
+    max-width: 560px;
+    margin: 0 auto 2rem;
+    opacity: 0.95;
+  }
+  .cta {
+    display: inline-block;
+    background: var(--cream);
+    color: var(--terracotta);
+    font-weight: 700;
+    padding: 0.9rem 2.2rem;
+    border-radius: 999px;
+    text-decoration: none;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    transition: transform 0.15s ease;
+  }
+  .cta:hover { transform: translateY(-2px); }
+
+  section { padding: 4rem 2rem; max-width: 1000px; margin: 0 auto; }
+
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    text-align: center;
+  }
+  .features h3 { color: var(--terracotta); margin-bottom: 0.5rem; font-size: 1.3rem; }
+  .features .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+  .menu {
+    background: var(--masa);
+    border-radius: 16px;
+  }
+  .menu h2, .about h2, .visit h2 {
+    text-align: center;
+    color: var(--avocado);
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  .menu-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+  .menu-item {
+    background: var(--cream);
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .menu-item span:first-child { font-weight: 600; }
+  .menu-item span:last-child { color: var(--terracotta); font-weight: 700; }
+
+  .about p { max-width: 700px; margin: 0 auto; text-align: center; font-size: 1.1rem; }
+
+  .visit {
+    text-align: center;
+  }
+  .visit .details {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: var(--avocado);
+    color: var(--cream);
+    padding: 2rem 3rem;
+    border-radius: 16px;
+    font-size: 1.05rem;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: #8a7f74;
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="tag">San Diego, CA</span>
+  <h1>The Best Tacos in San Diego</h1>
+  <p>Fresh masa, slow-braised meats, and salsa that hits different. Come taste why locals line up every night.</p>
+  <a class="cta" href="#visit">Find Us</a>
+</header>
+
+<section class="features">
+  <div>
+    <div class="icon">🌮</div>
+    <h3>Handmade Daily</h3>
+    <p>Tortillas pressed fresh every morning, never frozen.</p>
+  </div>
+  <div>
+    <div class="icon">🔥</div>
+    <h3>Bold Flavors</h3>
+    <p>House salsas ranging from smoky mild to fiery habanero.</p>
+  </div>
+  <div>
+    <div class="icon">⭐</div>
+    <h3>Locally Loved</h3>
+    <p>Rated San Diego's #1 taco spot three years running.</p>
+  </div>
+</section>
+
+<section class="menu">
+  <h2>Fan Favorites</h2>
+  <div class="menu-list">
+    <div class="menu-item"><span>Carne Asada Taco</span><span>$4.50</span></div>
+    <div class="menu-item"><span>Al Pastor Taco</span><span>$4.25</span></div>
+    <div class="menu-item"><span>Baja Fish Taco</span><span>$4.75</span></div>
+    <div class="menu-item"><span>Carnitas Taco</span><span>$4.25</span></div>
+    <div class="menu-item"><span>Grilled Veggie Taco</span><span>$3.95</span></div>
+    <div class="menu-item"><span>Horchata</span><span>$3.00</span></div>
+  </div>
+</section>
+
+<section class="about">
+  <h2>Our Story</h2>
+  <p>Born out of a family recipe book and a love for San Diego's coastal food scene, Taco Place has been serving
+  the neighborhood since day one. Every taco is made to order, every salsa made from scratch — because that's
+  the only way we know how to do it.</p>
+</section>
+
+<section class="visit" id="visit">
+  <h2>Come Visit</h2>
+  <div class="details">
+    <span>📍 123 Ocean Front Walk, San Diego, CA 92109</span>
+    <span>🕐 Open Daily · 11am – 10pm</span>
+    <span>📞 (619) 555-0142</span>
+  </div>
+</section>
+
+<footer>
+  &copy; 2026 Taco Place. All rights reserved.
+</footer>
+
+</body>
+</html>
