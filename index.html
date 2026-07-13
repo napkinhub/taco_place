@@ -1,266 +1,451 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Taco Place — Find the Best Tacos in San Diego</title>
+<title>GreenFlag — Deal Safety Checker</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-  :root {
-    --terracotta: #d94f30;
-    --masa: #f6e7c9;
-    --avocado: #4f6b3a;
-    --charcoal: #2b2320;
-    --cream: #fffaf0;
-    --gold: #e0a458;
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: var(--cream);
-    color: var(--charcoal);
-    line-height: 1.6;
-  }
-  header {
-    background: linear-gradient(135deg, var(--terracotta), #b8391f);
-    color: var(--cream);
-    padding: 5rem 2rem 4rem;
-    text-align: center;
-  }
-  header .tag {
-    display: inline-block;
-    background: rgba(255,255,255,0.15);
-    padding: 0.35rem 1rem;
-    border-radius: 999px;
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 1.25rem;
-  }
-  header h1 {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    margin-bottom: 1rem;
-  }
-  header p {
-    font-size: 1.15rem;
-    max-width: 560px;
-    margin: 0 auto 2.5rem;
-    opacity: 0.95;
-  }
-
-  .search-bar {
-    max-width: 640px;
-    margin: 0 auto;
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .search-bar input {
-    flex: 1 1 260px;
-    padding: 0.9rem 1.25rem;
-    border-radius: 999px;
-    border: none;
-    font-size: 1rem;
-  }
-  .filters {
-    max-width: 900px;
-    margin: 2rem auto 0;
-    display: flex;
-    gap: 0.6rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .filter-btn {
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.4);
-    color: var(--cream);
-    padding: 0.5rem 1.1rem;
-    border-radius: 999px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background 0.15s ease;
-  }
-  .filter-btn:hover, .filter-btn.active {
-    background: var(--cream);
-    color: var(--terracotta);
-    font-weight: 600;
-  }
-
-  main { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; }
-
-  .results-count {
-    text-align: center;
-    color: #8a7f74;
-    margin-bottom: 2rem;
-    font-size: 0.95rem;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.75rem;
-  }
-
-  .card {
-    background: var(--masa);
-    border-radius: 16px;
-    padding: 1.75rem;
-    position: relative;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    transition: transform 0.15s ease;
-  }
-  .card:hover { transform: translateY(-3px); }
-
-  .rank {
-    position: absolute;
-    top: -14px;
-    left: 1.5rem;
-    background: var(--terracotta);
-    color: var(--cream);
-    font-weight: 700;
-    font-size: 0.85rem;
-    padding: 0.3rem 0.8rem;
-    border-radius: 999px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  }
-
-  .card h3 {
-    color: var(--charcoal);
-    font-size: 1.3rem;
-    margin: 0.75rem 0 0.25rem;
-  }
-  .neighborhood {
-    color: var(--avocado);
-    font-weight: 600;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .rating {
-    color: var(--gold);
-    font-weight: 700;
-    margin: 0.6rem 0;
-  }
-  .rating span.count { color: #8a7f74; font-weight: 400; font-size: 0.85rem; }
-
-  .signature {
-    font-size: 0.95rem;
-    margin-bottom: 0.5rem;
-  }
-  .signature b { color: var(--terracotta); }
-
-  .meta {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    color: #6b5f52;
-    margin-top: 1rem;
-    border-top: 1px solid rgba(0,0,0,0.08);
-    padding-top: 0.75rem;
-  }
-
-  .no-results {
-    text-align: center;
-    color: #8a7f74;
-    padding: 3rem 0;
-    display: none;
-  }
-
-  footer {
-    text-align: center;
-    padding: 2rem;
-    color: #8a7f74;
-    font-size: 0.85rem;
+  .btn-float:hover {
+    animation: floaty 1.4s ease-in-out infinite;
   }
 </style>
 </head>
-<body>
+<body class="h-full bg-slate-100 text-slate-800 font-sans antialiased">
 
-<header>
-  <span class="tag">San Diego, CA</span>
-  <h1>Find the Best Tacos in San Diego</h1>
-  <p>We scouted the city's taquerias, food trucks, and stands so you don't have to. Here are the spots locals actually line up for.</p>
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Search by name or neighborhood...">
+<div class="min-h-screen flex flex-col max-w-md mx-auto bg-white shadow-xl sm:my-6 sm:rounded-3xl sm:overflow-hidden">
+
+  <!-- Top bar -->
+  <header class="sticky top-0 z-20 bg-emerald-600 text-white px-4 pt-4 pb-3 sm:rounded-t-3xl">
+    <div class="flex items-center gap-2">
+      <button id="backBtn" class="hidden -ml-1 mr-1 w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/15 active:bg-white/25" aria-label="Back to form">
+        <span class="text-xl leading-none">&larr;</span>
+      </button>
+      <span class="text-xl">🚩</span>
+      <h1 class="font-extrabold text-lg tracking-tight">GreenFlag</h1>
+      <span class="ml-auto text-[11px] font-medium bg-white/15 px-2 py-1 rounded-full">Deal Safety Checker</span>
+    </div>
+    <!-- traffic-light strip -->
+    <div class="flex gap-1.5 mt-3">
+      <span class="h-1.5 flex-1 rounded-full bg-emerald-300/70"></span>
+      <span class="h-1.5 flex-1 rounded-full bg-amber-300/70"></span>
+      <span class="h-1.5 flex-1 rounded-full bg-red-300/70"></span>
+    </div>
+  </header>
+
+  <!-- SCREEN 1: Input form -->
+  <main id="screen-input" class="flex-1 px-4 pt-5 pb-28 space-y-4">
+    <div>
+      <h2 class="text-base font-bold text-slate-900">Tell us about the deal</h2>
+      <p class="text-sm text-slate-500 mt-0.5">We'll scan it for common secondhand-marketplace scam patterns.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div>
+        <label for="platform" class="block text-xs font-semibold text-slate-600 mb-1">Platform</label>
+        <select id="platform" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+          <option>Facebook Marketplace</option>
+          <option>Craigslist</option>
+          <option>OfferUp</option>
+        </select>
+      </div>
+      <div>
+        <label for="itemType" class="block text-xs font-semibold text-slate-600 mb-1">Item type</label>
+        <input type="text" id="itemType" placeholder="e.g. MacBook Air 2022" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+      </div>
+      <div>
+        <label for="salePrice" class="block text-xs font-semibold text-slate-600 mb-1">Listed price (USD)</label>
+        <input type="number" min="0" id="salePrice" placeholder="e.g. 350" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+      </div>
+      <div>
+        <label for="marketPrice" class="block text-xs font-semibold text-slate-600 mb-1">Expected market price (USD)</label>
+        <input type="number" min="0" id="marketPrice" placeholder="e.g. 700" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+      </div>
+      <div>
+        <label for="paymentMethod" class="block text-xs font-semibold text-slate-600 mb-1">Payment method</label>
+        <select id="paymentMethod" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+          <option value="cash">Cash</option>
+          <option value="paypal_gs">PayPal (Goods &amp; Services)</option>
+          <option value="paypal_ff">PayPal (Friends &amp; Family)</option>
+          <option value="zelle">Zelle</option>
+          <option value="venmo">Venmo</option>
+          <option value="cashapp">Cash App</option>
+          <option value="wire">Wire Transfer</option>
+          <option value="giftcard">Gift Card</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div>
+        <label for="dealType" class="block text-xs font-semibold text-slate-600 mb-1">Deal type</label>
+        <select id="dealType" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+          <option value="in_person">In-Person Meetup</option>
+          <option value="shipping">Shipping</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label for="chatText" class="block text-xs font-semibold text-slate-600 mb-1">Chat messages</label>
+      <textarea id="chatText" rows="7" placeholder="Paste the conversation here, one message per line...&#10;e.g.&#10;Seller: I can hold it if you send a $50 deposit via Zelle first&#10;Seller: I'm out of town this week so I'll ship it once you pay" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm resize-y focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"></textarea>
+    </div>
+
+    <p id="formError" class="hidden text-sm text-red-600 font-medium">Please paste the chat messages first.</p>
+  </main>
+
+  <!-- Sticky CTA for screen 1 -->
+  <div id="ctaBar" class="sticky bottom-0 border-t border-slate-200 bg-white/95 backdrop-blur px-4 py-3 sm:rounded-b-3xl">
+    <button id="checkBtn" class="btn-float w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2">
+      <span>✅</span><span>Check</span>
+    </button>
   </div>
-  <div class="filters" id="filters">
-    <button class="filter-btn active" data-hood="all">All Neighborhoods</button>
-    <button class="filter-btn" data-hood="Barrio Logan">Barrio Logan</button>
-    <button class="filter-btn" data-hood="North Park">North Park</button>
-    <button class="filter-btn" data-hood="Ocean Beach">Ocean Beach</button>
-    <button class="filter-btn" data-hood="Old Town">Old Town</button>
-    <button class="filter-btn" data-hood="City Heights">City Heights</button>
-  </div>
-</header>
 
-<main>
-  <p class="results-count" id="resultsCount"></p>
-  <div class="grid" id="grid"></div>
-  <p class="no-results" id="noResults">No taco spots match your search. Try another neighborhood.</p>
-</main>
+  <!-- SCREEN 2: Deal Safety Report -->
+  <main id="screen-report" class="hidden flex-1 px-4 pt-5 pb-8 space-y-6 overflow-y-auto">
 
-<footer>
-  &copy; 2026 Taco Place — a San Diego taco finder. Rankings are illustrative sample data.
-</footer>
+    <!-- Verdict stamp -->
+    <section class="flex flex-col items-center text-center gap-3 py-2">
+      <div id="verdictStamp" class="inline-block border-4 rounded-lg px-5 py-2.5 -rotate-3 select-none">
+        <span id="verdictText" class="text-2xl font-black uppercase tracking-widest"></span>
+      </div>
+      <p id="verdictScore" class="text-sm font-semibold text-slate-500"></p>
+      <p id="verdictSub" class="text-sm text-slate-600 max-w-xs"></p>
+    </section>
+
+    <!-- Scam type -->
+    <section>
+      <h3 class="text-sm font-bold text-slate-900 mb-2">Detected scam type</h3>
+      <div id="scamTags" class="flex flex-wrap gap-2"></div>
+    </section>
+
+    <!-- Reasons -->
+    <section>
+      <h3 class="text-sm font-bold text-slate-900 mb-2">Why we flagged this</h3>
+      <ul id="reasonList" class="space-y-2"></ul>
+    </section>
+
+    <!-- Chat with highlights -->
+    <section>
+      <h3 class="text-sm font-bold text-slate-900 mb-2">Chat — risky parts marked</h3>
+      <div id="chatRender" class="rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-2 text-sm"></div>
+      <div class="flex gap-4 mt-2 text-xs text-slate-500">
+        <span class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-red-600 text-white text-[10px] flex items-center justify-center">🚩</span>High risk</span>
+        <span class="flex items-center gap-1"><span class="w-4 h-4 rounded bg-amber-200"></span>Caution</span>
+      </div>
+    </section>
+
+    <!-- Safety checklist -->
+    <section>
+      <h3 class="text-sm font-bold text-slate-900 mb-2">Safety checklist before you proceed</h3>
+      <ul id="checklist" class="space-y-2"></ul>
+    </section>
+
+    <button id="newCheckBtn" class="w-full border-2 border-emerald-600 text-emerald-700 font-bold py-3 rounded-xl hover:bg-emerald-50 active:scale-[0.99] transition">
+      Check another deal
+    </button>
+  </main>
+
+</div>
 
 <script>
-  const spots = [
-    { rank: 1, name: "El Fogón de Logan", hood: "Barrio Logan", rating: 4.9, reviews: 812, dish: "Carne Asada", price: "$", hours: "11am–9pm" },
-    { rank: 2, name: "North Park Taco Co.", hood: "North Park", rating: 4.8, reviews: 654, dish: "Al Pastor", price: "$$", hours: "11am–11pm" },
-    { rank: 3, name: "Sunset Baja Fish Tacos", hood: "Ocean Beach", rating: 4.8, reviews: 590, dish: "Baja Fish", price: "$", hours: "11am–8pm" },
-    { rank: 4, name: "Casa Vieja Taquería", hood: "Old Town", rating: 4.7, reviews: 1023, dish: "Carnitas", price: "$$", hours: "10am–10pm" },
-    { rank: 5, name: "La Reina de City Heights", hood: "City Heights", rating: 4.7, reviews: 441, dish: "Lengua", price: "$", hours: "9am–9pm" },
-    { rank: 6, name: "Logan Ave Truck", hood: "Barrio Logan", rating: 4.6, reviews: 337, dish: "Birria", price: "$", hours: "6pm–2am" },
-    { rank: 7, name: "Green Table Tacos", hood: "North Park", rating: 4.6, reviews: 298, dish: "Grilled Veggie", price: "$$", hours: "11am–9pm" },
-    { rank: 8, name: "Pier Street Fish Tacos", hood: "Ocean Beach", rating: 4.5, reviews: 512, dish: "Shrimp", price: "$$", hours: "11am–8pm" },
+  // ---- Scam signal pattern library ----
+  const RISK_CATEGORIES = [
+    {
+      id: 'advance_payment',
+      label: 'Advance payment / deposit scam',
+      weight: 30,
+      severity: 'high',
+      patterns: [
+        /deposit/i, /hold (it|this|the item) for you/i, /reserve (it|the item)/i,
+        /send (me )?(the )?money first/i, /before (we|i) (can )?meet/i, /secure the item/i,
+        /send half (now|upfront)/i, /pay (in advance|upfront|first)/i, /down ?payment/i
+      ],
+      reason: 'Paying before you see or receive the item is a classic advance-payment scam — once you pay, the seller often stops responding.'
+    },
+    {
+      id: 'verification_code',
+      label: 'Verification code scam',
+      weight: 35,
+      severity: 'high',
+      patterns: [
+        /verification code/i, /confirmation code/i, /(sent|texted|send) you a code/i,
+        /\botp\b/i, /\d-digit code/i, /code i ('?ve )?(just )?sent/i, /read (me|out) the code/i,
+        /share (that|the) code/i
+      ],
+      reason: 'Scammers ask you to forward a "verification" code that is actually a real login or payment approval code, letting them take over your account or payment.'
+    },
+    {
+      id: 'off_platform_payment',
+      label: 'Off-platform payment scam',
+      weight: 20,
+      severity: 'high',
+      patterns: [
+        /\bzelle\b/i, /\bvenmo\b/i, /cash ?app/i, /wire transfer/i, /gift ?card/i,
+        /friends and family/i, /western union/i, /moneygram/i
+      ],
+      reason: 'Zelle, Venmo/Cash App (friends & family), gift cards, and wire transfers move money instantly with no buyer protection and cannot be reversed.'
+    },
+    {
+      id: 'avoid_meeting',
+      label: 'Avoiding in-person meetup',
+      weight: 25,
+      severity: 'high',
+      patterns: [
+        /can'?t meet in person/i, /i'?m\s+(?:\w+\s+){0,2}(out of town|deployed|overseas|on a trip|in the military)/i,
+        /my (agent|assistant|driver|cousin) will (pick up|deliver|meet you)/i, /shipping only/i,
+        /i'?m not (available|around) to meet/i, /unable to meet/i
+      ],
+      reason: 'A genuine local seller can usually meet in person. Excuses to avoid meeting are common in shipping and relocation scams.'
+    },
+    {
+      id: 'fake_shipping',
+      label: 'Fake shipping scam',
+      weight: 25,
+      severity: 'high',
+      patterns: [
+        /i'?ll ship (it )?once (you|i) (pay|receive)/i, /use my (own )?shipping label/i,
+        /tracking (number|info|link) after (payment|you pay)/i, /courier will deliver/i,
+        /my own shipping company/i, /shipping agent/i
+      ],
+      reason: 'Promises to ship "after payment" with no verifiable tracking are a common way sellers take money without ever sending the item.'
+    },
+    {
+      id: 'urgency_pressure',
+      label: 'Urgency / pressure tactics',
+      weight: 10,
+      severity: 'med',
+      patterns: [
+        /need to sell (it )?today/i, /another buyer is interested/i, /act fast/i,
+        /first (come|to send( the)? money)/i, /i have other offers/i, /hurry/i
+      ],
+      reason: 'Artificial urgency is used to stop you from thinking carefully or verifying details before paying.'
+    }
   ];
 
-  const grid = document.getElementById('grid');
-  const resultsCount = document.getElementById('resultsCount');
-  const noResults = document.getElementById('noResults');
-  const searchInput = document.getElementById('searchInput');
-  const filterBtns = document.querySelectorAll('.filter-btn');
+  const PAYMENT_RISK = {
+    cash: 0, paypal_gs: 0, paypal_ff: 15, zelle: 15, venmo: 15,
+    cashapp: 15, wire: 20, giftcard: 25, other: 10
+  };
 
-  let activeHood = 'all';
+  const SAFETY_CHECKLIST = [
+    "Meet in a public, well-lit place — a police department 'safe exchange' zone if your area has one.",
+    "Never pay anything before you've seen and inspected the item in person.",
+    "Never share a verification, OTP, or confirmation code with anyone — no legitimate seller needs it.",
+    "Avoid Zelle, Venmo, Cash App, gift cards, or wire transfers with strangers — they can't be reversed.",
+    "If paying by PayPal, only use Goods & Services (not Friends & Family) so you're covered.",
+    "If the price is far below market value, treat it as a red flag, not a lucky deal.",
+    "Be cautious if a seller refuses to meet and insists on shipping only."
+  ];
 
-  function render() {
-    const query = searchInput.value.trim().toLowerCase();
-    const filtered = spots.filter(s => {
-      const matchesHood = activeHood === 'all' || s.hood === activeHood;
-      const matchesQuery = !query || s.name.toLowerCase().includes(query) || s.hood.toLowerCase().includes(query);
-      return matchesHood && matchesQuery;
-    });
-
-    grid.innerHTML = filtered.map(s => `
-      <div class="card">
-        <span class="rank">#${s.rank}</span>
-        <div class="neighborhood">${s.hood}</div>
-        <h3>${s.name}</h3>
-        <div class="rating">★ ${s.rating.toFixed(1)} <span class="count">(${s.reviews} reviews)</span></div>
-        <div class="signature">Signature: <b>${s.dish} Taco</b></div>
-        <div class="meta">
-          <span>${s.price}</span>
-          <span>${s.hours}</span>
-        </div>
-      </div>
-    `).join('');
-
-    resultsCount.textContent = filtered.length ? `Showing ${filtered.length} taco spot${filtered.length === 1 ? '' : 's'}` : '';
-    noResults.style.display = filtered.length ? 'none' : 'block';
+  function splitIntoSentences(text) {
+    const lines = text.split(/\n+/);
+    const sentences = [];
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      const parts = trimmed.split(/(?<=[.!?])\s+(?=[A-Z0-9])/);
+      for (const p of parts) {
+        const s = p.trim();
+        if (s) sentences.push(s);
+      }
+    }
+    return sentences;
   }
 
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeHood = btn.dataset.hood;
-      render();
-    });
+  function analyzeChat(chatText) {
+    const sentences = splitIntoSentences(chatText);
+    const categoryHits = {};
+    const flagged = [];
+
+    for (const sentence of sentences) {
+      let best = null;
+      for (const cat of RISK_CATEGORIES) {
+        for (const pattern of cat.patterns) {
+          const m = pattern.exec(sentence);
+          if (m) {
+            categoryHits[cat.id] = (categoryHits[cat.id] || 0) + 1;
+            if (!best || cat.weight > best.cat.weight) {
+              best = { cat, match: m[0], index: m.index };
+            }
+            break;
+          }
+        }
+      }
+      flagged.push({ text: sentence, hit: best });
+    }
+
+    return { sentences: flagged, categoryHits };
+  }
+
+  function computeReport(inputs) {
+    const { chatText, salePrice, marketPrice, paymentMethod, dealType } = inputs;
+    const { sentences, categoryHits } = analyzeChat(chatText);
+
+    let score = 0;
+    const reasons = [];
+    const matchedCategories = [];
+
+    for (const cat of RISK_CATEGORIES) {
+      const hits = categoryHits[cat.id] || 0;
+      if (hits > 0) {
+        const bonus = Math.min((hits - 1) * 5, 15);
+        score += cat.weight + bonus;
+        matchedCategories.push({ ...cat, hits });
+        reasons.push(`<b>${cat.label}</b> — found in ${hits} message${hits > 1 ? 's' : ''}. ${cat.reason}`);
+      }
+    }
+
+    if (salePrice > 0 && marketPrice > 0) {
+      const ratio = salePrice / marketPrice;
+      if (ratio < 0.3) {
+        score += 25;
+        reasons.push(`<b>Price is extremely low</b> — under 30% of typical market value ($${salePrice} vs ~$${marketPrice}), a common bait tactic.`);
+      } else if (ratio < 0.5) {
+        score += 15;
+        reasons.push(`<b>Price looks too good to be true</b> — under half of typical market value ($${salePrice} vs ~$${marketPrice}).`);
+      }
+    }
+
+    const paymentRisk = PAYMENT_RISK[paymentMethod] ?? 0;
+    if (paymentRisk > 0) {
+      score += paymentRisk;
+      const label = document.getElementById('paymentMethod').selectedOptions[0].text;
+      reasons.push(`<b>Requested payment method (${label})</b> offers little to no buyer protection and is hard to reverse once sent.`);
+    }
+
+    if (dealType === 'shipping' && (categoryHits['advance_payment'] || categoryHits['fake_shipping'])) {
+      score += 10;
+      reasons.push(`<b>Shipping-only deal combined with prepayment/shipping red flags</b> increases risk since you can't verify the item before paying.`);
+    }
+
+    score = Math.min(score, 100);
+
+    let verdict;
+    if (score >= 55) verdict = 'stop';
+    else if (score >= 25) verdict = 'caution';
+    else verdict = 'proceed';
+
+    const scamTypes = matchedCategories
+      .filter(c => c.id !== 'urgency_pressure')
+      .sort((a, b) => (b.weight * b.hits) - (a.weight * a.hits));
+
+    if (reasons.length === 0) {
+      reasons.push('No known scam patterns were detected in the chat — but always follow the safety checklist below.');
+    }
+
+    return { score, verdict, sentences, scamTypes, reasons };
+  }
+
+  const VERDICT_META = {
+    proceed: {
+      label: 'Proceed', border: 'border-emerald-600', text: 'text-emerald-600',
+      sub: 'No major red flags detected. Still follow standard safety practices.'
+    },
+    caution: {
+      label: 'Caution', border: 'border-amber-500', text: 'text-amber-500',
+      sub: 'Some risk signals found. Verify carefully before paying anything.'
+    },
+    stop: {
+      label: 'Do Not Proceed', border: 'border-red-600', text: 'text-red-600',
+      sub: 'Strong scam signals detected. This deal shows classic fraud patterns.'
+    }
+  };
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function renderChatLine(item) {
+    const safe = escapeHtml(item.text);
+    if (!item.hit) {
+      return `<p class="text-slate-700 leading-snug">${safe}</p>`;
+    }
+    const { cat, match, index } = item.hit;
+    const before = escapeHtml(item.text.slice(0, index));
+    const hl = escapeHtml(item.text.slice(index, index + match.length));
+    const after = escapeHtml(item.text.slice(index + match.length));
+    const isHigh = cat.severity === 'high';
+    const pinClasses = isHigh
+      ? 'bg-red-600'
+      : 'bg-amber-500';
+    return `
+      <div class="rounded-lg border ${isHigh ? 'border-red-200 bg-red-50' : 'border-amber-200 bg-amber-50'} px-2.5 py-2">
+        <div class="flex items-start gap-2">
+          <span class="mt-0.5 shrink-0 w-4 h-4 rounded-full ${pinClasses} text-white text-[9px] flex items-center justify-center">🚩</span>
+          <p class="leading-snug text-slate-800">${before}<mark class="bg-amber-200 rounded px-0.5">${hl}</mark>${after}</p>
+        </div>
+        <p class="mt-1 pl-6 text-xs ${isHigh ? 'text-red-700' : 'text-amber-700'}">${escapeHtml(cat.label)}: ${escapeHtml(cat.reason)}</p>
+      </div>`;
+  }
+
+  function render(report) {
+    const meta = VERDICT_META[report.verdict];
+    const stamp = document.getElementById('verdictStamp');
+    stamp.className = `inline-block border-4 rounded-lg px-5 py-2.5 -rotate-3 select-none ${meta.border}`;
+    const verdictText = document.getElementById('verdictText');
+    verdictText.className = `text-2xl font-black uppercase tracking-widest ${meta.text}`;
+    verdictText.textContent = meta.label;
+    document.getElementById('verdictScore').textContent = `Risk score: ${report.score}/100`;
+    document.getElementById('verdictSub').textContent = meta.sub;
+
+    const tagsEl = document.getElementById('scamTags');
+    if (report.scamTypes.length === 0) {
+      tagsEl.innerHTML = `<span class="text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700">No specific scam pattern detected</span>`;
+    } else {
+      tagsEl.innerHTML = report.scamTypes.map(c =>
+        `<span class="text-xs font-semibold px-3 py-1.5 rounded-full bg-red-100 text-red-700">${c.label}</span>`
+      ).join('');
+    }
+
+    document.getElementById('reasonList').innerHTML = report.reasons.map(r =>
+      `<li class="text-sm text-slate-700 flex gap-2"><span class="text-slate-400">&bull;</span><span>${r}</span></li>`
+    ).join('');
+
+    document.getElementById('chatRender').innerHTML = report.sentences.map(renderChatLine).join('');
+
+    document.getElementById('checklist').innerHTML = SAFETY_CHECKLIST.map(item =>
+      `<li class="flex items-start gap-2 text-sm text-slate-700">
+        <span class="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 text-xs flex items-center justify-center font-bold">✓</span>
+        <span>${item}</span>
+      </li>`
+    ).join('');
+  }
+
+  function showScreen(name) {
+    const isReport = name === 'report';
+    document.getElementById('screen-input').classList.toggle('hidden', isReport);
+    document.getElementById('ctaBar').classList.toggle('hidden', isReport);
+    document.getElementById('screen-report').classList.toggle('hidden', !isReport);
+    document.getElementById('backBtn').classList.toggle('hidden', !isReport);
+    window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+  }
+
+  document.getElementById('checkBtn').addEventListener('click', () => {
+    const chatText = document.getElementById('chatText').value;
+    const errorEl = document.getElementById('formError');
+    if (!chatText.trim()) {
+      errorEl.classList.remove('hidden');
+      return;
+    }
+    errorEl.classList.add('hidden');
+
+    const inputs = {
+      chatText,
+      salePrice: parseFloat(document.getElementById('salePrice').value) || 0,
+      marketPrice: parseFloat(document.getElementById('marketPrice').value) || 0,
+      paymentMethod: document.getElementById('paymentMethod').value,
+      dealType: document.getElementById('dealType').value
+    };
+    const report = computeReport(inputs);
+    render(report);
+    showScreen('report');
   });
 
-  searchInput.addEventListener('input', render);
-
-  render();
+  document.getElementById('backBtn').addEventListener('click', () => showScreen('input'));
+  document.getElementById('newCheckBtn').addEventListener('click', () => showScreen('input'));
 </script>
 
 </body>
