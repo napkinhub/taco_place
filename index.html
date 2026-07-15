@@ -27,7 +27,9 @@
       </button>
       <span class="text-xl">🚩</span>
       <h1 class="font-extrabold text-lg tracking-tight">GreenFlag</h1>
-      <span class="ml-auto text-[11px] font-medium bg-white/15 px-2 py-1 rounded-full">Deal Safety Checker</span>
+      <button id="historyBtn" class="ml-auto w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/15 active:bg-white/25" aria-label="View history" title="History">
+        <span class="text-base leading-none">🕘</span>
+      </button>
     </div>
     <!-- traffic-light strip -->
     <div class="flex gap-1.5 mt-3">
@@ -146,6 +148,16 @@
     <button id="newCheckBtn" class="w-full border-2 border-emerald-600 text-emerald-700 font-bold py-3 rounded-xl hover:bg-emerald-50 active:scale-[0.99] transition">
       Check another deal
     </button>
+  </main>
+
+  <!-- SCREEN 3: History -->
+  <main id="screen-history" class="hidden flex-1 px-4 pt-5 pb-8 space-y-4 overflow-y-auto">
+    <div>
+      <h2 class="text-base font-bold text-slate-900">Past checks</h2>
+      <p class="text-sm text-slate-500 mt-0.5">Saved from this and previous sessions.</p>
+    </div>
+    <p id="historyStatus" class="text-sm text-slate-500">Loading…</p>
+    <ul id="historyList" class="space-y-2"></ul>
   </main>
 
 </div>
@@ -415,12 +427,85 @@
   }
 
   function showScreen(name) {
-    const isReport = name === 'report';
-    document.getElementById('screen-input').classList.toggle('hidden', isReport);
-    document.getElementById('ctaBar').classList.toggle('hidden', isReport);
-    document.getElementById('screen-report').classList.toggle('hidden', !isReport);
-    document.getElementById('backBtn').classList.toggle('hidden', !isReport);
+    document.getElementById('screen-input').classList.toggle('hidden', name !== 'input');
+    document.getElementById('ctaBar').classList.toggle('hidden', name !== 'input');
+    document.getElementById('screen-report').classList.toggle('hidden', name !== 'report');
+    document.getElementById('screen-history').classList.toggle('hidden', name !== 'history');
+    document.getElementById('backBtn').classList.toggle('hidden', name === 'input');
     window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+  }
+
+  function saveCheck(inputs, report) {
+    fetch('/api/checks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        platform: document.getElementById('platform').value,
+        itemType: document.getElementById('itemType').value,
+        salePrice: inputs.salePrice,
+        marketPrice: inputs.marketPrice,
+        paymentMethod: inputs.paymentMethod,
+        dealType: inputs.dealType,
+        chatText: inputs.chatText,
+        score: report.score,
+        verdict: report.verdict,
+        scamTypes: report.scamTypes.map(c => c.label),
+        reasons: report.reasons
+      })
+    }).catch(err => console.error('Failed to save check', err));
+  }
+
+  function renderHistoryItem(item) {
+    const verdictClass = {
+      stop: 'bg-red-100 text-red-700',
+      caution: 'bg-amber-100 text-amber-700',
+      proceed: 'bg-emerald-100 text-emerald-700'
+    }[item.verdict] || 'bg-slate-100 text-slate-700';
+    const date = new Date(item.created_at).toLocaleString();
+    const reasons = (item.reasons || []).map(r => `<li class="flex gap-2"><span class="text-slate-400">&bull;</span><span>${r}</span></li>`).join('');
+
+    const li = document.createElement('li');
+    li.className = 'rounded-xl border border-slate-200 bg-slate-50 overflow-hidden';
+    li.innerHTML = `
+      <button class="w-full text-left px-3 py-2.5 flex items-center gap-2" data-toggle>
+        <span class="text-xs font-bold px-2 py-1 rounded-full ${verdictClass} uppercase">${item.verdict}</span>
+        <span class="text-sm font-semibold text-slate-800 truncate">${escapeHtml(item.item_type || 'Untitled item')}</span>
+        <span class="ml-auto text-xs text-slate-500">${item.score}/100</span>
+      </button>
+      <div class="hidden px-3 pb-3 text-sm text-slate-700 space-y-2" data-detail>
+        <p class="text-xs text-slate-500">${escapeHtml(item.platform || '')} &middot; ${date}</p>
+        <ul class="space-y-1 text-sm">${reasons}</ul>
+      </div>`;
+    li.querySelector('[data-toggle]').addEventListener('click', () => {
+      li.querySelector('[data-detail]').classList.toggle('hidden');
+    });
+    return li;
+  }
+
+  function loadHistory() {
+    const statusEl = document.getElementById('historyStatus');
+    const listEl = document.getElementById('historyList');
+    listEl.innerHTML = '';
+    statusEl.textContent = 'Loading…';
+    statusEl.classList.remove('hidden');
+
+    fetch('/api/checks?limit=20')
+      .then(res => {
+        if (!res.ok) throw new Error('request failed');
+        return res.json();
+      })
+      .then(items => {
+        if (items.length === 0) {
+          statusEl.textContent = 'No saved checks yet.';
+          return;
+        }
+        statusEl.classList.add('hidden');
+        items.forEach(item => listEl.appendChild(renderHistoryItem(item)));
+      })
+      .catch(err => {
+        statusEl.textContent = 'Could not load history right now.';
+        console.error('Failed to load history', err);
+      });
   }
 
   document.getElementById('checkBtn').addEventListener('click', () => {
@@ -441,11 +526,16 @@
     };
     const report = computeReport(inputs);
     render(report);
+    saveCheck(inputs, report);
     showScreen('report');
   });
 
   document.getElementById('backBtn').addEventListener('click', () => showScreen('input'));
   document.getElementById('newCheckBtn').addEventListener('click', () => showScreen('input'));
+  document.getElementById('historyBtn').addEventListener('click', () => {
+    showScreen('history');
+    loadHistory();
+  });
 </script>
 
 </body>
